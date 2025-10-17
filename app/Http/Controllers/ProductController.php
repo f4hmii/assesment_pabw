@@ -12,8 +12,13 @@ class ProductController extends Controller
     public function index()
     {
         $products = session()->get('products', []);
-        // DIUBAH: Langsung memanggil 'index' dari folder views
-        return view('index', ['products' => $products]);
+        // Mengirimkan index produk sebagai 'id' ke view agar bisa digunakan untuk link edit/delete
+        $productsWithId = array_map(function ($product, $index) {
+            $product['id'] = $index;
+            return $product;
+        }, $products, array_keys($products));
+
+        return view('index', ['products' => $productsWithId]);
     }
 
     /**
@@ -21,7 +26,6 @@ class ProductController extends Controller
      */
     public function create()
     {
-        // DIUBAH: Langsung memanggil 'create' dari folder views
         return view('create');
     }
 
@@ -30,29 +34,86 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input dari form
         $request->validate([
             'nama' => 'required|string|min:3',
-            'harga' => 'required|integer',
+            'harga' => 'required|integer|min:0',
         ]);
 
-        // Siapkan data produk baru
         $newProduct = [
             'nama' => $request->input('nama'),
-            'harga' => $request->input('harga'),
+            'harga' => (int) $request->input('harga'),
         ];
 
-        // Ambil data produk yang sudah ada dari session
         $products = session()->get('products', []);
-
-        // Tambahkan produk baru ke dalam array
         $products[] = $newProduct;
-
-        // Simpan kembali array yang sudah diperbarui ke dalam session
         session()->put('products', $products);
 
-        // Arahkan kembali ke halaman daftar produk dengan pesan sukses
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
-}
 
+    /**
+     * Menampilkan form untuk mengedit produk.
+     * @param int $id Index produk dalam array session
+     */
+    public function edit(int $id)
+    {
+        $products = session()->get('products', []);
+
+        if (!isset($products[$id])) {
+            return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan!');
+        }
+
+        $product = $products[$id];
+        $product['id'] = $id; // Sertakan index/id ke view
+
+        return view('edit', ['product' => $product]);
+    }
+
+    /**
+     * Memperbarui produk di dalam session.
+     * @param Request $request
+     * @param int $id Index produk dalam array session
+     */
+    public function update(Request $request, int $id)
+    {
+        $request->validate([
+            'nama' => 'required|string|min:3',
+            'harga' => 'required|integer|min:0',
+        ]);
+
+        $products = session()->get('products', []);
+
+        if (!isset($products[$id])) {
+            return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan!');
+        }
+
+        $products[$id] = [
+            'nama' => $request->input('nama'),
+            'harga' => (int) $request->input('harga'),
+        ];
+
+        session()->put('products', $products);
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui!');
+    }
+
+    /**
+     * Menghapus produk dari session.
+     * @param int $id Index produk dalam array session
+     */
+    public function destroy(int $id)
+    {
+        $products = session()->get('products', []);
+
+        if (!isset($products[$id])) {
+            return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan!');
+        }
+
+        // Gunakan array_splice untuk menghapus dan mengurutkan ulang index
+        array_splice($products, $id, 1);
+
+        session()->put('products', $products);
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus!');
+    }
+}
