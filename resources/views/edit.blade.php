@@ -39,6 +39,19 @@
             <label for="harga">Harga:</label>
             <input type="number" id="harga" name="harga" value="{{ old('harga', $product['harga']) }}">
         </div>
+
+        <!-- {{-- kode fairuz: input kategori --}} -->
+         <label for="category">Kategori:</label>
+        <select name="category" id="category">
+            <option value="">-- Semua Kategori --</option>
+            @php $cur = old('category', $product['category'] ?? ''); @endphp
+
+            <option value="Baju"   {{ $cur == 'Baju' ? 'selected' : '' }}>Baju</option>
+            <option value="Celana" {{ $cur == 'Celana' ? 'selected' : '' }}>Celana</option>
+            <option value="Sepatu" {{ $cur == 'Sepatu' ? 'selected' : '' }}>Sepatu</option>
+            <option value="Jaket"  {{ $cur == 'Jaket' ? 'selected' : '' }}>Jaket</option>
+            <option value="Aksesoris" {{ $cur == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
+        </select>
         <button type="submit" class="btn">Update Produk</button>
     </form>
 

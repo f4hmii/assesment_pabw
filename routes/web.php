@@ -34,3 +34,7 @@ Route::put('/products/{product}', [ProductController::class, 'update'])->name('p
 // Route untuk menghapus produk (DELETE - Proses Hapus)
 // Menggunakan method DELETE untuk hapus, sesuai standar RESTful
 Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+// kode fairuz: route baru untuk halaman filter produk
+Route::get('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
+

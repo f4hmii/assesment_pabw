@@ -40,8 +40,24 @@
             <label for="harga">Harga:</label>
             <input type="number" id="harga" name="harga" value="{{ old('harga') }}">
         </div>
+                <!-- {{-- kode fairuz: input kategori --}} -->
+        <div class="form-group">
+            <label for="category">Kategori:</label>
+            <select id="category" name="category" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Baju" {{ old('category') == 'Baju' ? 'selected' : '' }}>Baju</option>
+                <option value="Celana" {{ old('category') == 'Celana' ? 'selected' : '' }}>Celana</option>
+                <option value="Sepatu" {{ old('category') == 'Sepatu' ? 'selected' : '' }}>Sepatu</option>
+                <option value="Jaket" {{ old('category') == 'Jaket' ? 'selected' : '' }}>Jaket</option>
+                <option value="Aksesoris" {{ old('category') == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
+            </select>
+        </div>
+
+        </div>
+        <!-- selesai -->
+
         <button type="submit" class="btn">Simpan Produk</button>
-    </form>
+        </form>
 
     <a href="{{ route('products.index') }}" class="back-link">Kembali ke Daftar Produk</a>
 
