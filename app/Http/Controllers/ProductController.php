@@ -9,16 +9,22 @@ class ProductController extends Controller
     /**
      * Menampilkan daftar semua produk.
      */
-    public function index()
+    
+    public function index() 
     {
+        
         $products = session()->get('products', []);
+
+      
+
         // Mengirimkan index produk sebagai 'id' ke view agar bisa digunakan untuk link edit/delete
         $productsWithId = array_map(function ($product, $index) {
             $product['id'] = $index;
             return $product;
         }, $products, array_keys($products));
 
-        return view('index', ['products' => $productsWithId]);
+        return view('index', ['products' => $productsWithId]); 
+
     }
 
     /**
@@ -65,8 +71,10 @@ class ProductController extends Controller
 
         $product = $products[$id];
         $product['id'] = $id; // Sertakan index/id ke view
+        $category = $product['category'] ?? null;
 
-        return view('edit', ['product' => $product]);
+        // return view('edit', ['product' => $product]); ---kode fahmi---
+         return view('edit', ['product' => $product, 'category' => $category]);
     }
 
     /**
@@ -79,6 +87,10 @@ class ProductController extends Controller
         $request->validate([
             'nama' => 'required|string|min:3',
             'harga' => 'required|integer|min:0',
+            // kode fairuz: validasi kategori
+              'category' => 'nullable|string',
+            // selesai
+
         ]);
 
         $products = session()->get('products', []);
@@ -90,7 +102,8 @@ class ProductController extends Controller
         $products[$id] = [
             'nama' => $request->input('nama'),
             'harga' => (int) $request->input('harga'),
-        ];
+            'category' => $request->input('category', null),
+         ];
 
         session()->put('products', $products);
 
@@ -116,4 +129,47 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus!');
     }
+
+    /**
+     * Halaman untuk memfilter produk berdasarkan kategori dan harga.
+     * kode fairuz
+     */
+    public function filter(Request $request)
+    {
+        // Ambil semua produk dari session
+        $products = session()->get('products', []);
+
+        // Ambil input filter dari form
+        $category = $request->input('category');
+        $maxPrice = $request->input('maxPrice');
+
+        // Filter berdasarkan kategori (jika diisi)
+        if ($category) {
+            $products = array_filter($products, function ($product) use ($category) {
+                return isset($product['category']) && strtolower($product['category']) === strtolower($category);
+            });
+        }
+
+        // Filter berdasarkan harga maksimal (jika diisi)
+        if ($maxPrice) {
+            $products = array_filter($products, function ($product) use ($maxPrice) {
+                return isset($product['harga']) && $product['harga'] <= $maxPrice;
+            });
+        }
+
+        // Tambahkan ID index agar bisa ditampilkan
+        $productsWithId = array_map(function ($product, $index) {
+            $product['id'] = $index;
+            return $product;
+        }, $products, array_keys($products));
+
+        // Kirim data ke view filter
+        return view('filter', [
+            'products' => $productsWithId,
+            'category' => $category,
+            'maxPrice' => $maxPrice
+        ]);
+    }
 }
+   
+

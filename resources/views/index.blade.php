@@ -36,7 +36,6 @@
     @endif
 
     <a href="{{ route('products.create') }}" class="btn btn-create">Tambah Produk Baru</a>
-
     <table>
         <thead>
             <tr>
@@ -50,6 +49,7 @@
                 <tr>
                     <td>{{ $product['nama'] }}</td>
                     <td>Rp {{ number_format($product['harga'], 0, ',', '.') }}</td>
+                    
                     <td class="action-cell">
                         <a href="{{ route('products.edit', $product['id']) }}" class="btn btn-edit">Edit</a>
                         <form action="{{ route('products.destroy', $product['id']) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
