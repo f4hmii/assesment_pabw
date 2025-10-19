@@ -42,11 +42,17 @@ class ProductController
         $request->validate([
             'nama' => 'required|string|min:3',
             'harga' => 'required|integer|min:0',
+            // kode fairuz: validasi kategori
+            'category' => 'nullable|string',
+            // selesai
         ]);
 
         $newProduct = [
             'nama' => $request->input('nama'),
             'harga' => (int) $request->input('harga'),
+            // kode fairuz: simpan kategori
+            'category' => $request->input('category', null),
+            // selesai
         ];
 
         $products = session()->get('products', []);
@@ -89,8 +95,10 @@ class ProductController
         $products[$id] = [
             'nama' => $request->input('nama'),
             'harga' => (int) $request->input('harga'),
-            'category' => $request->input('category', null),
-        ];
+            // kode fairuz: simpan kategori
+             'category' => $request->input('category', $products[$id]['category'] ?? null),
+            //  selesai
+         ];
 
         session()->put('products', $products);
 
