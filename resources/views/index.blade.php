@@ -12,6 +12,11 @@
         tr:nth-child(even) { background-color: #f2f2f2; }
         .btn { padding: 8px 12px; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 5px; border: none; cursor: pointer; font-size: 0.9em; }
         .btn-create { background-color: #007bff;}
+        
+        /* ▼▼▼ CSS BARU DITAMBAHKAN ▼▼▼ */
+        .btn-filter { background-color: #6c757d; } 
+        /* ▲▲▲ CSS BARU DITAMBAHKAN ▲▲▲ */
+
         .btn-edit { background-color: #ffc107; color: black; }
         .btn-delete { background-color: #dc3545; }
         .action-cell form { display: inline-block; margin: 0; }
@@ -36,6 +41,8 @@
     @endif
 
     <a href="{{ route('products.create') }}" class="btn btn-create">Tambah Produk Baru</a>
+    
+    <a href="{{ route('products.filter') }}" class="btn btn-filter">Filter Produk</a>
     <table>
         <thead>
             <tr>

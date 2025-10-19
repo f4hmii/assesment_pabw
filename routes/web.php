@@ -1,15 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// 💡 BARIS INI WAJIB ADA UNTUK MENEMUKAN CONTROLLER ANDA
 use App\Http\Controllers\ProductController;
 
-// Route untuk halaman utama ('/'), akan langsung dialihkan ke halaman daftar produk
 Route::get('/', function () {
     return redirect()->route('products.index');
 });
 
-// -- ROUTE UNTUK CREATE & READ (YANG SUDAH ANDA BUAT) --
 
 // Route untuk menampilkan semua produk (READ)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
