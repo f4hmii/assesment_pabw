@@ -41,6 +41,7 @@
             <tr>
                 <th>Nama Produk</th>
                 <th>Harga</th>
+                <th>Kategori</th>
                 <th style="width: 150px;">Aksi</th>
             </tr>
         </thead>
@@ -49,7 +50,9 @@
                 <tr>
                     <td>{{ $product['nama'] }}</td>
                     <td>Rp {{ number_format($product['harga'], 0, ',', '.') }}</td>
-                    
+                    <!-- kode fairuz -->
+                    <td>{{ $product['category'] ?? '-' }}</td>
+                    <!-- selesai -->
                     <td class="action-cell">
                         <a href="{{ route('products.edit', $product['id']) }}" class="btn btn-edit">Edit</a>
                         <form action="{{ route('products.destroy', $product['id']) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">

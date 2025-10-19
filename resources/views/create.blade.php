@@ -42,14 +42,14 @@
         </div>
                 <!-- {{-- kode fairuz: input kategori --}} -->
         <div class="form-group">
-            <label for="category">Kategori:</label>
-            <select id="category" name="category" required>
+           <label for="category">Kategori</label>
+            <select name="category" id="category">
                 <option value="">-- Pilih Kategori --</option>
-                <option value="Baju" {{ old('category') == 'Baju' ? 'selected' : '' }}>Baju</option>
-                <option value="Celana" {{ old('category') == 'Celana' ? 'selected' : '' }}>Celana</option>
-                <option value="Sepatu" {{ old('category') == 'Sepatu' ? 'selected' : '' }}>Sepatu</option>
-                <option value="Jaket" {{ old('category') == 'Jaket' ? 'selected' : '' }}>Jaket</option>
-                <option value="Aksesoris" {{ old('category') == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
+                <option value="Baju">Baju</option>
+                <option value="Celana">Celana</option>
+                <option value="Sepatu">Sepatu</option>
+                <option value="Jaket">Jaket</option>
+                <option value="Aksesoris">Aksesoris</option>
             </select>
         </div>
 
