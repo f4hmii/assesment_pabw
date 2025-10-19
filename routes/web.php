@@ -33,7 +33,7 @@ Route::get('/products/filter', [ProductController::class, 'filter'])->name('prod
 
 // SEARCH - Mencari produk berdasarkan nama/kategori
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
-
-Route::post('/testimoni', [TestimoniController::class, 'store'])->name('testimoni.store');
-Route::put('/testimoni/{id}', [TestimoniController::class, 'update'])->name('testimoni.update');
-Route::delete('/testimoni/{id}', [TestimoniController::class, 'destroy'])->name('testimoni.destroy');
+Route::get('/testimoni', [ProductController::class, 'indexTestimoni'])->name('testimoni.index');
+Route::post('/testimoni', [ProductController::class, 'storeTestimoni'])->name('testimoni.store');
+Route::put('/testimoni/{id}', [ProductController::class, 'updateTestimoni'])->name('testimoni.update');
+Route::delete('/testimoni/{id}', [ProductController::class, 'destroyTestimoni'])->name('testimoni.destroy');

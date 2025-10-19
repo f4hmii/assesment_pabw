@@ -6,34 +6,37 @@ use Illuminate\Http\Request;
 
 class ProductController
 {
-    /**
-     * Menampilkan daftar semua produk.
-     */
+      // kode zulfahmi
+    /*Menampilkan daftar semua produk. */
+   public function index()
+{
+    // Ambil produk, kategori, dan testimoni dari session
+    $products = session()->get('products', []);
+    $categories = session()->get('categories', []);
+    $testimonis = session()->get('testimonis', []);
 
-    public function index()
-    {
-        // Ambil produk, kategori, dan testimoni dari session (default ke array kosong)
-        $products = session()->get('products', []);
-        $categories = session()->get('categories', []);     // tambah jika view menggunakan $categories
-        $testimonis = session()->get('testimonis', []);     // penting — supaya $testimonis tidak undefined
+    // Tambahkan ID
+    $productsWithId = array_map(function ($product, $index) {
+        $product['id'] = $index;
+        return $product;
+    }, $products, array_keys($products));
 
-        // Menambahkan index sebagai id untuk tiap produk agar bisa dipakai untuk edit/delete
-        $productsWithId = array_map(function ($product, $index) {
-            $product['id'] = $index;
-            return $product;
-        }, $products, array_keys($products));
+    // Kirim SEMUA data
+    return view('index', [
+        'products'   => $productsWithId,
+        'categories' => $categories,
+        'testimonis' => $testimonis,
+    ]);
+}
 
-        // Kirim semua variabel yang dibutuhkan ke view index
-        return view('index', [
-            'products' => $productsWithId,
-            'categories' => $categories,
-            'testimonis' => $testimonis,
-        ]);
-    }
+    /*Menampilkan form untuk menambah produk baru.*/
+   public function create()
+{
+    return view('create');
+}
 
-    /**
-     * Menyimpan produk baru ke dalam array di session.
-     */
+
+    /*Menyimpan produk baru ke dalam array di session.*/
     public function store(Request $request)
     {
         $request->validate([
@@ -53,31 +56,20 @@ class ProductController
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    /**
-     * Menampilkan form untuk mengedit produk.
-     * @param int $id Index produk dalam array session
-     */
+    /*Menampilkan form untuk mengedit produk.*/
     public function edit(int $id)
     {
         $products = session()->get('products', []);
-
         if (!isset($products[$id])) {
             return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan!');
         }
-
         $product = $products[$id];
         $product['id'] = $id; // Sertakan index/id ke view
         $category = $product['category'] ?? null;
-
-        // return view('edit', ['product' => $product]); ---kode fahmi---
         return view('edit', ['product' => $product, 'category' => $category]);
     }
 
-    /**
-     * Memperbarui produk di dalam session.
-     * @param Request $request
-     * @param int $id Index produk dalam array session
-     */
+    /*Memperbarui produk di dalam session.*/
     public function update(Request $request, int $id)
     {
         $request->validate([
@@ -86,7 +78,6 @@ class ProductController
             // kode fairuz: validasi kategori
             'category' => 'nullable|string',
             // selesai
-
         ]);
 
         $products = session()->get('products', []);
@@ -106,10 +97,7 @@ class ProductController
         return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui!');
     }
 
-    /**
-     * Menghapus produk dari session.
-     * @param int $id Index produk dalam array session
-     */
+    /**Menghapus produk dari session.*/
     public function destroy(int $id)
     {
         $products = session()->get('products', []);
@@ -117,14 +105,11 @@ class ProductController
         if (!isset($products[$id])) {
             return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan!');
         }
-
-        // Gunakan array_splice untuk menghapus dan mengurutkan ulang index
+        //array_splice untuk menghapus dan mengurutkan ulang index
         array_splice($products, $id, 1);
-
         session()->put('products', $products);
-
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus!');
-    }
+    }// kode zulfahmi selesai
 
     /**
      * Halaman untuk memfilter produk berdasarkan kategori dan harga.
@@ -170,34 +155,38 @@ class ProductController
     /**
      * Mencari produk berdasarkan nama atau kategori.
      */
-    public function search(Request $request)
-    {
-        // Ambil semua produk dari session
-        $products = session()->get('products', []);
+  public function search(Request $request)
+{
+    // Ambil semua data dari session
+    $products = session()->get('products', []);
+    $categories = session()->get('categories', []);
+    $testimonis = session()->get('testimonis', []);
 
-        // Ambil input pencarian dari form
-        $keyword = $request->input('keyword');
+    // Ambil input pencarian dari form
+    $keyword = $request->input('keyword');
 
-        // Jika ada keyword, filter produk
-        if ($keyword) {
-            $products = array_filter($products, function ($product) use ($keyword) {
-                return stripos($product['nama'], $keyword) !== false ||
-                    (isset($product['category']) && stripos($product['category'], $keyword) !== false);
-            });
-        }
-
-        // Tambahkan ID index agar bisa digunakan untuk edit/delete
-        $productsWithId = array_map(function ($product, $index) {
-            $product['id'] = $index;
-            return $product;
-        }, $products, array_keys($products));
-
-        // Kembalikan ke view index dengan hasil pencarian
-        return view('index', [
-            'products' => $productsWithId,
-            'keyword' => $keyword
-        ]);
+    // Jika ada keyword, filter produk
+    if ($keyword) {
+        $products = array_filter($products, function ($product) use ($keyword) {
+            return stripos($product['nama'], $keyword) !== false ||
+                (isset($product['category']) && stripos($product['category'], $keyword) !== false);
+        });
     }
+
+    // Tambahkan ID index agar bisa digunakan untuk edit/delete
+    $productsWithId = array_map(function ($product, $index) {
+        $product['id'] = $index;
+        return $product;
+    }, $products, array_keys($products));
+
+    // Kirim SEMUA data ke view (biar gak undefined)
+    return view('index', [
+        'products'   => $productsWithId,
+        'categories' => $categories,
+        'testimonis' => $testimonis,
+        'keyword'    => $keyword,
+    ]);
+}
     /**
      * CRUD sederhana untuk Customer
      * Contoh: Tambah dan tampilkan pelanggan
@@ -240,4 +229,47 @@ class ProductController
 
         return redirect()->route('customers.index')->with('success', 'Customer berhasil dihapus!');
     }
+
+  public function indexTestimoni()
+    {
+        $products = session('products', []);
+        $categories = session('categories', []);
+        $testimonis = session('testimonis', []);
+        return view('index', compact('products', 'categories', 'testimonis'));
+    }
+
+    public function storeTestimoni(Request $request)
+    {
+        $testimonis = session('testimonis', []);
+        $testimonis[] = [
+            'nama' => $request->nama,
+            'isi' => $request->isi
+        ];
+
+        session(['testimonis' => $testimonis]);
+        return redirect()->back()->with('success_testimoni', 'Testimoni berhasil ditambahkan!');
+    }
+
+    public function updateTestimoni(Request $request, $id)
+    {
+        $testimonis = session('testimonis', []);
+        if (isset($testimonis[$id])) {
+            $testimonis[$id]['isi'] = $request->isi;
+            session(['testimonis' => $testimonis]);
+            return redirect()->back()->with('success_testimoni', 'Testimoni berhasil diperbarui!');
+        }
+        return redirect()->back()->with('error', 'Testimoni tidak ditemukan!');
+    }
+
+    public function destroyTestimoni($id)
+    {
+        $testimonis = session('testimonis', []);
+        unset($testimonis[$id]);
+        session(['testimonis' => array_values($testimonis)]);
+        return redirect()->back()->with('success_testimoni', 'Testimoni berhasil dihapus!');
+    }
+
 }
+
+
+
