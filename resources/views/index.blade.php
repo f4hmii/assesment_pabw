@@ -112,6 +112,8 @@
     @endif
 
     <a href="{{ route('products.create') }}" class="btn btn-create">Tambah Produk Baru</a>
+    
+    <a href="{{ route('products.filter') }}" class="btn btn-filter">Filter Produk</a>
     <table>
         <thead>
             <tr>
