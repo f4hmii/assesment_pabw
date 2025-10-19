@@ -9,30 +9,26 @@ class ProductController
     /**
      * Menampilkan daftar semua produk.
      */
-    
-    public function index() 
+
+    public function index()
     {
-        
+        // Ambil produk, kategori, dan testimoni dari session (default ke array kosong)
         $products = session()->get('products', []);
+        $categories = session()->get('categories', []);     // tambah jika view menggunakan $categories
+        $testimonis = session()->get('testimonis', []);     // penting — supaya $testimonis tidak undefined
 
-      
-
-        // Mengirimkan index produk sebagai 'id' ke view agar bisa digunakan untuk link edit/delete
+        // Menambahkan index sebagai id untuk tiap produk agar bisa dipakai untuk edit/delete
         $productsWithId = array_map(function ($product, $index) {
             $product['id'] = $index;
             return $product;
         }, $products, array_keys($products));
 
-        return view('index', ['products' => $productsWithId]); 
-
-    }
-
-    /**
-     * Menampilkan form untuk menambah produk baru.
-     */
-    public function create()
-    {
-        return view('create');
+        // Kirim semua variabel yang dibutuhkan ke view index
+        return view('index', [
+            'products' => $productsWithId,
+            'categories' => $categories,
+            'testimonis' => $testimonis,
+        ]);
     }
 
     /**
@@ -74,7 +70,7 @@ class ProductController
         $category = $product['category'] ?? null;
 
         // return view('edit', ['product' => $product]); ---kode fahmi---
-         return view('edit', ['product' => $product, 'category' => $category]);
+        return view('edit', ['product' => $product, 'category' => $category]);
     }
 
     /**
@@ -88,7 +84,7 @@ class ProductController
             'nama' => 'required|string|min:3',
             'harga' => 'required|integer|min:0',
             // kode fairuz: validasi kategori
-              'category' => 'nullable|string',
+            'category' => 'nullable|string',
             // selesai
 
         ]);
@@ -103,7 +99,7 @@ class ProductController
             'nama' => $request->input('nama'),
             'harga' => (int) $request->input('harga'),
             'category' => $request->input('category', null),
-         ];
+        ];
 
         session()->put('products', $products);
 
@@ -168,8 +164,80 @@ class ProductController
             'products' => $productsWithId,
             'category' => $category,
             'maxPrice' => $maxPrice
+
         ]);
     }
-}
-   
+    /**
+     * Mencari produk berdasarkan nama atau kategori.
+     */
+    public function search(Request $request)
+    {
+        // Ambil semua produk dari session
+        $products = session()->get('products', []);
 
+        // Ambil input pencarian dari form
+        $keyword = $request->input('keyword');
+
+        // Jika ada keyword, filter produk
+        if ($keyword) {
+            $products = array_filter($products, function ($product) use ($keyword) {
+                return stripos($product['nama'], $keyword) !== false ||
+                    (isset($product['category']) && stripos($product['category'], $keyword) !== false);
+            });
+        }
+
+        // Tambahkan ID index agar bisa digunakan untuk edit/delete
+        $productsWithId = array_map(function ($product, $index) {
+            $product['id'] = $index;
+            return $product;
+        }, $products, array_keys($products));
+
+        // Kembalikan ke view index dengan hasil pencarian
+        return view('index', [
+            'products' => $productsWithId,
+            'keyword' => $keyword
+        ]);
+    }
+    /**
+     * CRUD sederhana untuk Customer
+     * Contoh: Tambah dan tampilkan pelanggan
+     */
+    public function customers()
+    {
+        $customers = session()->get('customers', []);
+        return view('customers.index', ['customers' => $customers]);
+    }
+
+    public function storeCustomer(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|min:3',
+            'email' => 'required|email'
+        ]);
+
+        $newCustomer = [
+            'nama' => $request->input('nama'),
+            'email' => $request->input('email')
+        ];
+
+        $customers = session()->get('customers', []);
+        $customers[] = $newCustomer;
+        session()->put('customers', $customers);
+
+        return redirect()->route('customers.index')->with('success', 'Customer berhasil ditambahkan!');
+    }
+
+    public function deleteCustomer($id)
+    {
+        $customers = session()->get('customers', []);
+
+        if (!isset($customers[$id])) {
+            return redirect()->route('customers.index')->with('error', 'Customer tidak ditemukan!');
+        }
+
+        array_splice($customers, $id, 1);
+        session()->put('customers', $customers);
+
+        return redirect()->route('customers.index')->with('success', 'Customer berhasil dihapus!');
+    }
+}
