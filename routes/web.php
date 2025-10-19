@@ -1,40 +1,39 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// 💡 BARIS INI WAJIB ADA UNTUK MENEMUKAN CONTROLLER ANDA
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TestimoniController;
 
-// Route untuk halaman utama ('/'), akan langsung dialihkan ke halaman daftar produk
+
+// Halaman utama dialihkan ke daftar produk
 Route::get('/', function () {
     return redirect()->route('products.index');
 });
 
-// -- ROUTE UNTUK CREATE & READ (YANG SUDAH ANDA BUAT) --
-
-// Route untuk menampilkan semua produk (READ)
+// READ - Menampilkan semua produk
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
-// Route untuk menampilkan form tambah produk (CREATE - Tampilan Form)
+// CREATE - Form tambah produk
 Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
 
-// Route untuk memproses penyimpanan produk baru (CREATE - Proses Simpan)
+// CREATE - Proses simpan produk baru
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 
-
-// -- ROUTE UNTUK UPDATE & DELETE (YANG DITAMBAHKAN) --
-
-// Route untuk menampilkan form edit produk (UPDATE - Tampilan Form)
-// {product} adalah parameter untuk ID/index produk yang akan diedit
+// UPDATE - Form edit produk
 Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
 
-// Route untuk memproses pembaruan data produk (UPDATE - Proses Simpan)
-// Menggunakan method PUT untuk update, sesuai standar RESTful
+// UPDATE - Proses simpan perubahan produk
 Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
 
-// Route untuk menghapus produk (DELETE - Proses Hapus)
-// Menggunakan method DELETE untuk hapus, sesuai standar RESTful
+// DELETE - Hapus produk
 Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 
-// kode fairuz: route baru untuk halaman filter produk
+// FILTER - Menyaring produk berdasarkan kategori/harga
 Route::get('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
 
+// SEARCH - Mencari produk berdasarkan nama/kategori
+Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
+Route::get('/testimoni', [ProductController::class, 'indexTestimoni'])->name('testimoni.index');
+Route::post('/testimoni', [ProductController::class, 'storeTestimoni'])->name('testimoni.store');
+Route::put('/testimoni/{id}', [ProductController::class, 'updateTestimoni'])->name('testimoni.update');
+Route::delete('/testimoni/{id}', [ProductController::class, 'destroyTestimoni'])->name('testimoni.destroy');
