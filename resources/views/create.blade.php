@@ -20,7 +20,7 @@
     {{-- Bagian ini akan tampil jika ada error validasi --}}
     @if ($errors->any())
         <div class="alert-danger">
-            <strong>Whoops! Ada beberapa masalah dengan input Anda.</strong><br><br>
+            <strong>Ada beberapa masalah dengan input Anda.</strong><br><br>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>

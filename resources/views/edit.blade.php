@@ -19,7 +19,7 @@
 
     @if ($errors->any())
         <div class="alert-danger">
-            <strong>Whoops! Ada beberapa masalah dengan input Anda.</strong><br><br>
+            <strong>Ada beberapa masalah dengan input Anda.</strong><br><br>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -41,19 +41,16 @@
         </div>
 
         <!-- {{-- kode fairuz: input kategori --}} -->
-         <label for="category">Kategori:</label>
-        <select name="category" id="category">
-            <option value="">-- Semua Kategori --</option>
-           @php $cur = old('category', $product['category'] ?? '') @endphp
-
-        <select name="category" id="category">
-            <option value="">-- Pilih Kategori --</option>
-            <option value="Baju" {{ $cur == 'Baju' ? 'selected' : '' }}>Baju</option>
-            <option value="Celana" {{ $cur == 'Celana' ? 'selected' : '' }}>Celana</option>
-            <option value="Sepatu" {{ $cur == 'Sepatu' ? 'selected' : '' }}>Sepatu</option>
-            <option value="Jaket" {{ $cur == 'Jaket' ? 'selected' : '' }}>Jaket</option>
-            <option value="Aksesoris" {{ $cur == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
-        </select>
+              <div class="form-group">
+           <label for="category">Kategori</label>
+            <select name="category" id="category">
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Baju">Baju</option>
+                <option value="Celana">Celana</option>
+                <option value="Sepatu">Sepatu</option>
+                <option value="Jaket">Jaket</option>
+                <option value="Aksesoris">Aksesoris</option>
+            </select>
         <button type="submit" class="btn">Update Produk</button>
     </form>
 
